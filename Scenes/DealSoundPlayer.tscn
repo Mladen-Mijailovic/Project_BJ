@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://sfdmc8g4xs4v"]
+
+[ext_resource type="AudioStream" uid="uid://3pr5qghk5uws" path="res://Sounds/card-shove-1.ogg" id="1_gcqin"]
+
+[node name="DealSoundPlayer" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_gcqin")

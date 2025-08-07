@@ -1,0 +1,93 @@
+[gd_scene load_steps=9 format=3 uid="uid://b83kdwaj8oq22"]
+
+[ext_resource type="Texture2D" uid="uid://mjrnddul32mg" path="res://Assets/blackjack_table.jpg" id="1_kln2b"]
+[ext_resource type="Script" uid="uid://ullx8sugpywi" path="res://Scripts/Deck.gd" id="1_r150o"]
+[ext_resource type="Script" uid="uid://c8d437qi0g3yw" path="res://Scripts/GameMenager.gd" id="1_rgh2o"]
+[ext_resource type="Script" uid="uid://15p3n7psfkfu" path="res://Scripts/Hand.gd" id="2_idj7w"]
+[ext_resource type="Script" uid="uid://cxemw5l14ssw" path="res://Scripts/UI.gd" id="5_pbw6q"]
+[ext_resource type="PackedScene" uid="uid://mqpq7jhwb4tc" path="res://Scenes/Card.tscn" id="5_v1gob"]
+[ext_resource type="PackedScene" uid="uid://bsxm3osoqnnlf" path="res://Scenes/AnimationPlayer.tscn" id="7_jw32o"]
+[ext_resource type="AudioStream" uid="uid://3pr5qghk5uws" path="res://Sounds/card-shove-1.ogg" id="8_50glp"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_rgh2o")
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 976.0
+offset_bottom = 645.0
+texture = ExtResource("1_kln2b")
+
+[node name="Deck" type="Node2D" parent="."]
+script = ExtResource("1_r150o")
+
+[node name="Player" type="Node2D" parent="."]
+position = Vector2(487, 544)
+
+[node name="Hand" type="Node2D" parent="Player"]
+position = Vector2(1, 27)
+script = ExtResource("2_idj7w")
+card_scene = ExtResource("5_v1gob")
+
+[node name="Dealer" type="Node2D" parent="."]
+position = Vector2(498, 105)
+
+[node name="Hand" type="Node2D" parent="Dealer"]
+position = Vector2(-1, -35)
+script = ExtResource("2_idj7w")
+card_scene = ExtResource("5_v1gob")
+
+[node name="UI" type="CanvasLayer" parent="."]
+script = ExtResource("5_pbw6q")
+
+[node name="HitButton" type="Button" parent="UI"]
+offset_left = 1047.0
+offset_top = 209.0
+offset_right = 1078.0
+offset_bottom = 240.0
+text = "Hit
+"
+
+[node name="StandButton" type="Button" parent="UI"]
+offset_left = 1037.0
+offset_top = 262.0
+offset_right = 1090.0
+offset_bottom = 293.0
+rotation = 0.00440597
+text = "Stand
+"
+
+[node name="BetLabel" type="Label" parent="UI"]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ResultLabel" type="Label" parent="UI"]
+visible = false
+offset_left = 440.0
+offset_top = 338.0
+offset_right = 480.0
+offset_bottom = 361.0
+
+[node name="RestartButton" type="Button" parent="UI"]
+offset_left = 1018.0
+offset_top = 91.0
+offset_right = 1108.0
+offset_bottom = 147.0
+text = "Restart"
+
+[node name="PlayButton" type="Button" parent="UI"]
+offset_left = 1018.0
+offset_top = 18.0
+offset_right = 1106.0
+offset_bottom = 72.0
+text = "PLAY
+"
+
+[node name="AnimationPlayer" parent="." instance=ExtResource("7_jw32o")]
+
+[node name="DealSoundPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("8_50glp")
+
+[connection signal="pressed" from="UI/HitButton" to="." method="_on_hit_button_pressed"]
+[connection signal="pressed" from="UI/StandButton" to="." method="_on_stand_button_pressed"]
+[connection signal="pressed" from="UI/RestartButton" to="." method="restart_game"]
+[connection signal="pressed" from="UI/PlayButton" to="." method="start_game"]
