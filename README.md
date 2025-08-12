@@ -1,5 +1,4 @@
 <h1>Project BlackJack</h1>
-<hr>
 <p>This is my for fun project, where I tried making BlackJack game in Godot 4.</p>
 <img width="1152" height="648" alt="image" src="https://github.com/user-attachments/assets/3fae14db-3b64-437d-8c03-0813298a4cb9" />
 <h2>Controls</h2>
@@ -13,7 +12,6 @@
 </ul>
 <p>Buttons can be clicked too.</p>
 <img width="144" height="371" alt="image" src="https://github.com/user-attachments/assets/662f95d3-2aeb-4588-b37e-2f1aa5b6fd8b" />
-<hr>
 <h2>Rules</h2>
 <p>Player at the begging needs to select amount of tokens to bet. After that he needs to click Play button to start the game.</p>
 <p>Player and Dealer both get 2 card, where Dealer has 1 card fliped. Player can chose to Hit or Stand. If player Hits and goes over 21<br>
