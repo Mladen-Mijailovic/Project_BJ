@@ -269,6 +269,9 @@ func _on_hit_button_pressed():
 			update_split_button()
 			update_double_button()
 
+#Treba da se poboljsa split, kada sam kliknu next hand i isao Hit vise puta prebacilo mi je na prvu ruku
+#i dodeljivalo jednu kartu jednoj ruci, jednu kartu drugoj ruci...
+#Treba da se pomeri Next Hand dugme samo
 func _on_split_button_pressed():
 	if current_bet <= 0:
 		return
@@ -350,8 +353,10 @@ func dealer_turn():
 		else:
 			break
 	check_winner()
-
-func check_winner():
+	
+#treba da se doradi dodeljivanje nagrada, sada pogresno radi u slucajevima kada je Double i Split
+#ne prikazuje pravilno dobijene iznose za ta dva slucajeva jer se oni zasebno proveravaju
+func check_winner(): 
 	dealer_hand.reveal_hidden_cards()
 	var dealer_total = dealer_hand.update_hand_value()["total"]
 	var dealer_bust = dealer_total > 21
