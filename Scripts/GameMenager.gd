@@ -288,8 +288,6 @@ func _on_hit_button_pressed():
 				split_button.disabled = true
 				double_button.disabled = true
 
-#Treba da se poboljsa split, kada sam kliknu next hand i isao Hit vise puta prebacilo mi je na prvu ruku
-#i dodeljivalo jednu kartu jednoj ruci, jednu kartu drugoj ruci...
 func _on_split_button_pressed():
 	if current_bet <= 0:
 		return
