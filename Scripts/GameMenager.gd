@@ -85,7 +85,7 @@ func start_game():
 func setup_next_hand_button():
 	next_hand_button.text = "Next Hand"
 	next_hand_button.size = Vector2(150, 50)
-	next_hand_button.position = Vector2(500, 50)
+	next_hand_button.position = Vector2(990, 550)
 	next_hand_button.hide()
 	next_hand_button.pressed.connect(_on_next_hand_button_pressed)
 	add_child(next_hand_button)
@@ -99,18 +99,30 @@ func _on_next_hand_button_pressed():
 	current_hand_index += 1
 	
 	if current_hand_index < active_hands.size():
+		#Omoguci buttons ako ruka nije Bust
+		var current_hand = active_hands[current_hand_index]
+		var hand_value = current_hand.update_hand_value()["total"]
+		hit_button.disabled = (hand_value > 21)
+		stand_button.disabled = (hand_value > 21)
+		
 		update_ui_for_current_hand()
 	else:
 		next_hand_button.hide()
-		current_hand_index = 0
-		stand_button.disabled = false
+		dealer_turn()
 
 func update_ui_for_current_hand():
 	var current_hand = active_hands[current_hand_index]
-	var can_split_current = can_split_hand(current_hand)
+	var hand_value = current_hand.update_hand_value()["total"]
 	
+	hit_button.disabled = (hand_value > 21)
+	stand_button.disabled = (hand_value > 21)
+	
+	var can_split_current = can_split_hand(current_hand)
 	split_button.visible = can_split_current
 	split_button.disabled = !can_split_current
+	
+	double_button.visible = (current_hand.cards_in_hand.size()) == 2 && can_double()
+	double_button.disabled = !can_double()
 	
 	for i in range(active_hands.size()):
 		if i == current_hand_index:
@@ -210,14 +222,6 @@ func check_blackjack():
 			game_over("BlackJack! Player wins")
 	else:
 		pass
-	#var player_cards = player_hand.get_card_values()
-	#var dealer_cards = dealer_hand.get_card_values()
-	#
-	#if player_cards.has("A") and (player_cards.has("10") or player_cards.has("J") or player_cards.has("Q") or player_cards.has("K")):
-		#if dealer_cards.has("A") or dealer_cards.has("10") or dealer_cards.has("J") or dealer_cards.has("Q") or dealer_cards.has("K"):
-			#return
-		#else:
-			#game_over("Blackjack! Player wins!")
 
 func any_match(values, targets):
 	for value in values:
@@ -261,17 +265,31 @@ func _on_hit_button_pressed():
 	if card:
 		var result = current_hand.add_card(card)
 		if result["total"] > 21:
-			if current_hand_index < active_hands.size() - 1:
-				_on_next_hand_button_pressed()
+			current_hand.modulate = Color(1, 0.5, 0.5)
+			
+			#proverava da li ima jos jedna ruka
+			var next_playable_hand = false
+			for i in range(current_hand_index + 1, active_hands.size()):
+				if active_hands[i].update_hand_value()["total"] <= 21:
+					next_playable_hand = true
+					break
+			
+			if next_playable_hand:
+				next_hand_button.show()
+				hit_button.disabled = true
+				stand_button.disabled = true
 			else:
-				game_over("Player busts! Dealer wins.")
+				dealer_turn()
 		else:
 			update_split_button()
 			update_double_button()
+			
+			if current_hand.cards_in_hand.size() > 2:
+				split_button.disabled = true
+				double_button.disabled = true
 
 #Treba da se poboljsa split, kada sam kliknu next hand i isao Hit vise puta prebacilo mi je na prvu ruku
 #i dodeljivalo jednu kartu jednoj ruci, jednu kartu drugoj ruci...
-#Treba da se pomeri Next Hand dugme samo
 func _on_split_button_pressed():
 	if current_bet <= 0:
 		return
@@ -344,6 +362,15 @@ func _on_stand_button_pressed():
 	dealer_turn()
 
 func dealer_turn():
+	var all_bust = true
+	for hand in active_hands:
+		if hand.update_hand_value()["total"] <= 21:
+			all_bust = false
+			break
+	if all_bust:
+		game_over("All hands bust! Dealer wins.")
+		return
+	
 	dealer_hand.reveal_hidden_cards()
 	
 	while dealer_hand.update_hand_value()["total"] < 17:
@@ -378,7 +405,7 @@ func check_winner():
 		elif dealer_bust or hand_total > dealer_total:
 			var payout = current_bet * 1.5
 			if hand_result["is_blackjack"]:
-				payout = current_bet * 2.5
+				payout += current_bet * 2.5
 			total_payout += payout
 			result_text += "Win! (Dealer bust: %d)" % dealer_total
 			hand.modulate = Color(0.5, 1, 0.5)
